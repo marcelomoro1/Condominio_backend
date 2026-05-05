@@ -93,6 +93,20 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
 
+---- ENV ----
+
+PORT=3000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=
+DB_PASSWORD=
+DB_DATABASE=DBCONDOMINIO
+
+JWT_SECRET="TESTE"
+
+
+-------------
+
 
 CREATE DATABASE DBCONDOMINIO;
 USE DBCONDOMINIO;
