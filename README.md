@@ -93,6 +93,205 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
 
+
+CREATE DATABASE DBCONDOMINIO;
+USE DBCONDOMINIO;
+
+CREATE TABLE PESSOAS(
+	id_pessoa int primary key auto_increment,
+    nome VARCHAR(255) not null,
+    tipo_pessoa ENUM('fisica','juridica'),
+    cpf_cnpj VARCHAR(255) unique,
+    data_cadastro date
+);
+
+CREATE TABLE CONTATOS(
+	id_contato int primary key auto_increment,
+    tipo_contato VARCHAR(255) not null,
+    valor_contato VARCHAR(255) not null,
+    id_pessoa int,
+    FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa)
+);
+
+CREATE TABLE ENDERECOS (
+	id_enderecos int primary key auto_increment,
+    id_pessoa int,
+    logradouro varchar(255) not null,
+    numero int not null,
+    bairro varchar(255) not null,
+	cidade varchar(255) not null,
+	uf char(2) not null,
+    cep char(8) not null,
+	FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa)
+);
+
+CREATE TABLE UNIDADES(
+	id_unidade int primary key auto_increment,
+    num_unidade int not null,
+    bloco int not null,
+    tipo varchar(255) not null,
+    area_total float
+);
+
+
+CREATE TABLE MORADORES (
+	id_morador int primary key auto_increment,
+    id_pessoa int,
+    id_unidade int,
+ 	FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa),
+	FOREIGN KEY (id_unidade) REFERENCES UNIDADES(id_unidade)
+);
+
+CREATE TABLE FUNCIONARIOS (
+	id_funcionarios int primary key auto_increment,
+    id_pessoa int,    
+    funcao varchar(255) not null,
+    data_admissao DATE,
+    salario DECIMAL(10,2),
+    FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa)
+);
+
+CREATE TABLE FORNECEDORES(
+	id_fornecedores int primary key auto_increment,	
+    id_pessoa int,
+    area_atuacao varchar(255),
+	FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa)
+);
+
+CREATE TABLE VISITANTES(
+	id_visitantes int primary key auto_increment,	
+	id_pessoa int,
+	documento varchar(255),
+	FOREIGN KEY (id_pessoa) REFERENCES PESSOAS(id_pessoa)
+);
+
+CREATE TABLE AREAS_COMUNS(
+	id_areas_comum int primary key auto_increment,	
+    nome_area varchar(255),
+    descr_area varchar(255),
+    capacidade int
+);
+
+CREATE TABLE RESERVAS (
+	id_reserva int primary key auto_increment,	
+    data_reserva date,
+    hr_inicio date,
+    hr_fim date,
+    id_morador int,
+    id_areas_comum int,
+	FOREIGN KEY (id_areas_comum) REFERENCES AREAS_COMUNS(id_areas_comum),
+	FOREIGN KEY (id_morador) REFERENCES MORADORES(id_morador)
+);
+
+CREATE TABLE BOLETOS (
+	id_boleto int primary key auto_increment,
+	id_morador INT REFERENCES MORADORES(id_morador),
+	vl_boleto DECIMAL(10,2) NOT NULL,
+	dt_vencimento	DATE NOT NULL,
+	status ENUM('Pago','Atrasado','Pendente')
+);
+
+CREATE TABLE COMUNICADOS (
+	 id_comunicado int primary key auto_increment,
+	 titulo VARCHAR(255) NOT NULL,
+	 mensagem TEXT NOT NULL,
+	 dt_comunicado DATE NOT NULL,
+	 hr_comunicado TIME,
+	 tipo VARCHAR(30)
+);
+
+CREATE TABLE CONTRATOS (
+	 id_contrato int primary key auto_increment,
+	 id_fornecedor INT REFERENCES FORNECEDORES(ID_FORNECEDOR),
+	 descricao TEXT,
+	 data_inicio DATE,
+	 data_fim DATE,
+	 valor DECIMAL(10,2)
+);
+
+CREATE TABLE CONTRATOS_RH (
+	 id_contrato_rh int primary key auto_increment,
+	 id_funcionario INT REFERENCES FUNCIONARIOS(id_funcionario),
+	 descricao TEXT,
+	 data_inicio DATE,
+	 data_fim DATE,
+	 salario_acordado DECIMAL(10,2)
+);
+
+CREATE TABLE VISITAS (
+	 id_visita int primary key auto_increment,
+	 id_visitante INT REFERENCES VISITANTES(id_visitante),
+	 id_unidade INT REFERENCES UNIDADES(id_unidade),
+	 id_morador_autorizacao INT REFERENCES MORADORES(id_morador),
+	 placa_veiculo VARCHAR(10),
+	 data_entrada TIMESTAMP,
+	 data_saida TIMESTAMP
+);
+
+CREATE TABLE CONTAS_PAGAR (
+	 id_conta_pagar int primary key auto_increment,
+	 id_fornecedor INT REFERENCES FORNECEDORES(id_fornecedor),
+	 descricao TEXT,
+	 valor DECIMAL(10,2),
+	 data_vencimento DATE,
+	 status VARCHAR(20)
+);
+
+CREATE TABLE contas_receber (
+	 id_conta_receber int primary key auto_increment,
+	 id_morador INT REFERENCES MORADORES(id_morador),
+	 descricao TEXT,
+	 valor DECIMAL(10,2),
+	 data_vencimento DATE,
+	 status VARCHAR(20)
+);
+
+CREATE TABLE pagamentos (
+	 id_pagamento int primary key auto_increment,
+	 id_conta_pagar INT REFERENCES CONTAS_PAGAR(id_conta_pagar),
+	 data_pagamento DATE,
+	 valor_pago DECIMAL(10,2),
+	 forma_pagamento VARCHAR(30)
+);
+CREATE TABLE RECEBIMENTOS (
+	 id_recebimento int primary key auto_increment,
+	 id_conta_receber INT REFERENCES CONTAS_RECEBER(id_conta_receber),
+	 data_recebimento DATE,
+	 valor_recebido DECIMAL(10,2),
+	 forma_recebimento VARCHAR(30)
+);
+CREATE TABLE CONTA_CORRENTE (
+	 id_conta_corrente int primary key auto_increment,
+	 banco VARCHAR(50),
+	 agencia VARCHAR(20),
+	 num_conta VARCHAR(20),
+	 saldo_atual DECIMAL(12,2)
+);
+CREATE TABLE MOV_CONTA_CORRENTE (
+	 id_movimento int primary key auto_increment,
+	 id_conta_corrente INT REFERENCES CONTA_CORRENTE(id_conta_corrente),
+	 id_conta INT, 
+	 origem_conta VARCHAR(20), 
+	 tipo_movimento VARCHAR(20), 
+	 valor DECIMAL(10,2),
+	 data_movimento DATE,
+	 hr_movimento TIME,
+	 descricao TEXT
+);
+
+CREATE TABLE usuarios (
+    ID_PESSOA INT AUTO_INCREMENT PRIMARY KEY,
+    NOME VARCHAR(255) NOT NULL,
+    CPF_CNPJ VARCHAR(20) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Inserindo o usuário para você conseguir logar (Senha: teste)
+INSERT INTO usuarios (NOME, CPF_CNPJ, password) 
+VALUES ('admin2', '123', '$2a$12$K2xyrzGa.vUC6JLw0VIV2.Z9k/.0Qb4qzMXzY7tuJ80/n/GJE6v3e');
+
+
+
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
